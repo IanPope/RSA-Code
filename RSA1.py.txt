@@ -1,0 +1,133 @@
+from Tkinter import *
+import tkMessageBox
+from PIL import Image, ImageTk
+#e=11
+#n=899
+d=611
+
+alist=[]
+
+def openfileR():
+    global alist
+    f = open("Encryption.txt", "r")
+    for line in f:
+        name = line[0:-1]
+        alist.append(entry1)
+    f.close()
+print alist
+def openfileW():
+    global alist
+    f = open("Encryption.txt", 'w')
+    for i in alist:
+        f.write(i+"\n")
+    f.close()
+def buttonpress1():
+    x=listbox1.index(ACTIVE)
+    idx=x*4
+    entry1.insert(END,alist[idx])
+    entry2.insert(END,alist[idx+1])
+    entry3.insert(END,alist[idx+2])
+    entry4.insert(END,alist[idx+3])
+def buttonpress2():
+    x=listbox1.index(ACTIVE)
+    idx=x*4
+    alist[idx]=entry1.get()
+    alist[idx+1]=entry2.get()
+    alist[idx+2]=entry3.get()
+    alist[idx+3]=entry4.get()
+    openfileW()
+    print alist
+
+LUI_encryption = dict()
+LUI_decryption = dict()
+
+def encrypt_message():
+    msg = listbox1.get(1.0, END)
+    e = int(entry1.get())
+    n = int(entry2.get())
+    encrypted_msg = ''
+    for i in msg:
+        if i in LUI_encryption:
+            encrypted_msg += LUI_encryption[i]
+        else:
+            numerize = ord(i) 
+            encrypt = pow(numerize, e, n)
+            LUI_encryption[i] = unichr(encrypt)
+            encrypted_msg += unichr(encrypt)
+    clear_e()
+    listbox1.insert(END, encrypted_msg)
+    
+def clear_e():
+    listbox1.delete(1.0, END)
+    
+def clear_d():
+    listbox2.delete(1.0, END)
+     
+def decrypt_message():
+    msg = listbox2.get(1.0, END)
+    n = 899
+    decrypted_msg = ''
+    for i in msg:
+         if i in LUI_decryption:
+             decrypted_msg += LUI_decryption[i]
+         else:
+           numerize = ord(i)
+           decrypt = pow(numerize, d, n)
+           LUI_decryption[i] = unichr(decrypt)
+           decrypted_msg += unichr(decrypt)
+    clear_d()
+    listbox2.insert(END, decrypted_msg)
+     
+root = Tk()
+root.title("Ian+Zayd")
+
+menubar = Menu(root)
+filemenu = Menu(menubar)
+filemenu.add_command(label="Open", command=openfileR)
+filemenu.add_separator()
+filemenu.add_command(label="Save", command=openfileW)
+
+menubar.add_cascade(label="File", menu=filemenu)
+
+root.config(menu=menubar)
+
+button1 = Button(root, text="Encrypt", bg="grey", command=encrypt_message)
+button1.grid(row=7, column=0)
+
+button2 = Button(root, text="Decrypt", bg="grey", command=decrypt_message)
+button2.grid(row=7, column=8)
+
+label1 = Label(root, text="Encryption", bg="grey", anchor=W)
+label1.grid(row=1, column=0, sticky=W)
+
+label2 = Label(root, text="Decryption", bg="grey", anchor=W)
+label2.grid(row=1, column=8)
+
+scrollbar = Scrollbar(root, orient=VERTICAL)
+listbox1 = Text(root, yscrollcommand=scrollbar.set)
+scrollbar.config(command=listbox1.yview)
+scrollbar.grid(row=2, column=5, rowspan=5, sticky=W)
+
+scrollbar = Scrollbar(root, orient=VERTICAL)
+listbox2 = Text(root, yscrollcommand=scrollbar.set)
+scrollbar.config(command=listbox1.yview)
+scrollbar.grid(row=2, column=9, rowspan=5)
+
+label3 = Label(root, text="E Value", bg="red", anchor=W)
+label3.grid(row=1, column=6)
+
+entry1 = Entry(root)
+entry1.grid(row=2, column=6)
+
+label4 = Label(root, text="N Value", bg="red", anchor=W)
+label4.grid(row=3, column=6)
+
+
+entry2 = Entry(root)
+entry2.grid(row=4, column=6)
+
+listbox1.grid(row=2, column=0, columnspan=5, rowspan=3)
+
+listbox2.grid(row=2, column=8, columnspan=5, rowspan=3)
+
+mainloop()
